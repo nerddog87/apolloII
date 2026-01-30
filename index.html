@@ -1,0 +1,216 @@
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<script>
+			// Redirect to login if not authenticated. Accepts an `autologin=1` URL param
+			// which will set the login flag and allow access (used after login redirect).
+			(function(){
+				try{
+					var params = new URLSearchParams(window.location.search);
+					if(params.get('autologin') === '1'){
+						try{ localStorage.setItem('meow_logged_in','1'); }catch(e){}
+						// remove the param from the address bar without reloading
+						params.delete('autologin');
+						var newUrl = window.location.pathname + (params.toString()? '?' + params.toString(): '') + window.location.hash;
+						history.replaceState(null, '', newUrl);
+						return;
+					}
+					var logged = localStorage.getItem('meow_logged_in');
+					if(logged !== '1'){
+						// preserve current path when redirecting; include flag so login can show message
+						window.location.replace('login.html?required=1');
+					}
+				}catch(e){/* ignore */}
+			})();
+		</script>
+		<title>apollo / index</title>
+		<link rel="icon" href="favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="favicon.ico" />
+		<link rel="stylesheet" href="styles.css" />
+	</head>
+	<body>
+		<canvas id="weather-canvas" class="weather-canvas" aria-hidden="true"></canvas>
+		<header class="site-header">
+			<div class="container">
+				<a href="index.html" class="logo">apollo.<span class="logo-accent">dev</span></a>
+				<div class="header-right">
+				  <div class="user-widget">
+					<button id="user-btn" class="user-btn" aria-haspopup="true" aria-expanded="false" title="Account">👤 <span id="user-label">User</span></button>
+					<div id="user-panel" class="user-panel" role="dialog" aria-hidden="true">
+						<div class="user-top">
+							<div class="user-name" id="user-name">Username</div>
+						</div>
+						<hr />
+						<a class="panel-link" href="settings.html">Settings</a>
+						<label class="panel-link" style="display:flex;align-items:center;gap:.5rem;cursor:pointer">
+							<input id="trail-toggle" type="checkbox" style="width:1.05rem;height:1.05rem;margin:0;" />
+							<span style="font-weight:700;margin-left:.25rem">Mouse Trail</span>
+						</label>
+						<button id="logout-btn" class="panel-link" title="Log out">Logout</button>
+					</div>
+				  </div>
+				</div>
+			</div>
+		</header>
+		</header>
+
+	
+
+		<section class="container forum-list">
+			<div class="forums-grid">
+				<div class="forum-column">
+					<h3 class="forum-title">Forums</h3>
+					<ul class="forums">
+						<li class="forum-row">
+							<div class="forum-main">
+								<div class="forum-icon">📢</div>
+								<div class="forum-info">
+									<a class="forum-name" href="thread.html?thread=announcements">Announcements</a>
+									<div class="forum-desc">Official announcements from the Apollo team.</div>
+								</div>
+							</div>
+							<div class="forum-stats">
+								<div class="count">3 threads</div>
+								<div class="last">Last post by <strong>admin</strong><br/><small>Today</small></div>
+							</div>
+						</li>
+						<li class="forum-row">
+							<div class="forum-main">
+								<div class="forum-icon">🛈</div>
+								<div class="forum-info">
+									<a class="forum-name" href="thread.html?thread=updates">Updates</a>
+									<div class="forum-desc">Changelog and product updates.</div>
+								</div>
+							</div>
+							<div class="forum-stats">
+								<div class="count">5 threads</div>
+								<div class="last">Last post by <strong>moderator</strong><br/><small>Yesterday</small></div>
+							</div>
+						</li>
+						</ul>
+				</div>
+
+				<div class="forum-column">
+					<h3 class="forum-title">User Section</h3>
+					<ul class="thread-list">
+						<li class="thread-row"><a href="thread.html?thread=download-client">Download Client</a><div class="meta">Pinned • 12 replies</div></li>
+						<li class="thread-row"><a href="thread.html?thread=general-talk">General Talk</a><div class="meta">8 replies • last by user123</div></li>
+						<li class="thread-row"><a href="thread.html?thread=questions-faq">Questions / FAQ</a><div class="meta">Read before posting</div></li>
+					</ul>
+				</div>
+			</div>
+		</section>
+
+		<footer class="site-footer">
+			<div class="container">© 2026 - apollo.dev</div>
+		</footer>
+		<script src="weather.js"></script>
+		<script>
+			// Auto-start snow on this page only
+			document.addEventListener('DOMContentLoaded', function(){
+				try{
+					// Treat missing preference as "enabled" so snow appears by default
+					var raw = localStorage.getItem('meow_weather_enabled');
+					var enabled = (raw === null) ? true : (raw === '1');
+					var speed = parseFloat(localStorage.getItem('meow_weather_speed')) || 1;
+					if(window.WeatherEffects && typeof WeatherEffects.start === 'function'){
+						// ensure any previously-running effect is stopped first
+						if(typeof WeatherEffects.stop === 'function') WeatherEffects.stop();
+						if(enabled) WeatherEffects.start('snow');
+						if(typeof WeatherEffects.setSpeed === 'function') WeatherEffects.setSpeed(speed);
+					}
+				}catch(e){/* ignore */}
+				// attach logout handler
+				document.getElementById('logout-btn')?.addEventListener('click', function(){
+					try{ localStorage.removeItem('meow_logged_in'); localStorage.removeItem('meow_user'); }catch(e){}
+					window.location.href = 'login.html';
+				});
+
+				// user panel: populate and toggle
+				(function(){
+					var userBtn = document.getElementById('user-btn');
+					var userLabel = document.getElementById('user-label');
+					var userPanel = document.getElementById('user-panel');
+					var userNameEl = document.getElementById('user-name');
+					function getUser(){
+						try{
+							var u = localStorage.getItem('meow_user');
+							if(u) return u;
+						}catch(e){}
+						try{
+							var su = sessionStorage.getItem('meow_user_pending');
+							if(su) return su;
+						}catch(e){}
+						return 'Guest';
+					}
+					function setPanel(open){
+						if(!userPanel || !userBtn) return;
+						userBtn.setAttribute('aria-expanded', open? 'true':'false');
+						userPanel.setAttribute('aria-hidden', open? 'false':'true');
+						if(open) userBtn.closest('.user-widget')?.classList.add('open'); else userBtn.closest('.user-widget')?.classList.remove('open');
+					}
+					function updateUserDisplay(){
+						var u = getUser();
+						if(userLabel) userLabel.textContent = u;
+						if(userNameEl) userNameEl.textContent = u;
+					}
+					if(userBtn){
+						updateUserDisplay();
+						userBtn.addEventListener('click', function(e){
+							e.stopPropagation();
+							var open = userBtn.getAttribute('aria-expanded') === 'true';
+							setPanel(!open);
+						});
+					}
+					// close when clicking outside
+					document.addEventListener('click', function(e){
+						if(!userPanel) return;
+						if(!userPanel.contains(e.target) && !userBtn.contains(e.target)){
+							setPanel(false);
+						}
+					});
+					// update display if username changes in another tab/window
+					window.addEventListener('storage', function(e){
+						if(!e) return;
+						if(e.key === 'meow_user' || e.key === null){
+							try{ updateUserDisplay(); }catch(err){}
+						}
+					});
+
+					// also attempt a final immediate refresh (covers cases where storage was set
+					// during the login redirect flow and DOMContentLoaded already fired)
+					try{ updateUserDisplay(); }catch(e){}
+
+					// Fallback: poll a few times in case storage is written shortly after load
+					try{
+						var _poll=0;
+						var _p = setInterval(function(){
+							try{ updateUserDisplay(); }catch(e){}
+							_poll++;
+							if(_poll>8) clearInterval(_p);
+						}, 150);
+					}catch(e){}
+
+					// wire up the trail toggle control inside the user panel
+					try{
+						var trailToggle = document.getElementById('trail-toggle');
+						function readTrail(){ try{ return localStorage.getItem('meow_trail_enabled') === '1'; }catch(e){return false} }
+						function writeTrail(v){ try{ localStorage.setItem('meow_trail_enabled', v? '1':'0'); }catch(e){}
+							// dispatch custom event for immediate effect
+							try{ window.dispatchEvent(new CustomEvent('meow:trail-toggled', { detail: Boolean(v) })); }catch(e){}
+						}
+						if(trailToggle){
+							trailToggle.checked = readTrail();
+							trailToggle.addEventListener('change', function(e){ writeTrail(e.target.checked); });
+						}
+						// keep toggle in sync if changed in another tab
+						window.addEventListener('storage', function(ev){ if(ev.key === 'meow_trail_enabled'){ try{ if(trailToggle) trailToggle.checked = localStorage.getItem('meow_trail_enabled') === '1'; }catch(e){} } });
+					}catch(e){}
+				})();
+			});
+		</script>
+	</body>
+</html>

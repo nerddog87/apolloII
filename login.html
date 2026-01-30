@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Login / Apollo</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .login-wrap{max-width:360px;margin:6vh auto;padding:1.25rem;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+      .login-wrap h2{margin:0 0 .5rem}
+      .form-row{margin-top:.6rem}
+      input[type="text"],input[type="password"]{width:100%;padding:.6rem;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit}
+      .errmsg{color:#ffb4b4;font-size:.9rem;margin-top:.5rem}
+      .login-btn{margin-top:1rem;display:inline-block;padding:.6rem 1rem;border-radius:8px;background:var(--accent);color:#04202a;border:none;cursor:pointer}
+    </style>
+  </head>
+  <body>
+    <div id="auth-alert" class="alert-error" role="alert" style="display:none">You must be logged in to access</div>
+    <header class="site-header">
+      <div class="container"><a href="index.html" class="logo">Apollo.<span class="logo-accent">dev</span></a></div>
+    </header>
+    <main class="container">
+      <div class="login-wrap">
+        <h2>Sign in</h2>
+        <form id="login-form" autocomplete="off">
+          <div class="form-row">
+            <label for="user">User</label>
+            <input id="user" name="user" type="text" value="" required />
+          </div>
+          <div class="form-row">
+            <label for="pass">Password</label>
+            <input id="pass" name="pass" type="password" value="" required />
+          </div>
+          <div class="form-row">
+            <button class="login-btn" type="submit">Sign in</button>
+          </div>
+          <div id="err" class="errmsg" role="status" aria-live="polite"></div>
+        </form>
+        
+      </div>
+    </main>
+
+    <script>
+      (function(){
+        // show message if redirected here because login required
+        var redirectNext = null;
+        try{
+          var params = new URLSearchParams(window.location.search);
+          if(params.get('required') === '1'){
+            var a = document.getElementById('auth-alert');
+            if(a) a.style.display = 'block';
+          }
+          // capture any next param so we can forward after login
+          if(params.has('next')){
+            redirectNext = params.get('next');
+          }
+          // remove handled params from URL for cleanliness
+          params.delete('required');
+          params.delete('next');
+          var newUrl = window.location.pathname + (params.toString()? '?' + params.toString(): '') + window.location.hash;
+          history.replaceState(null, '', newUrl);
+        }catch(e){}
+
+        const form = document.getElementById('login-form');
+        const err = document.getElementById('err');
+        form.addEventListener('submit', function(e){
+          e.preventDefault();
+          const u = document.getElementById('user').value.trim();
+          const p = document.getElementById('pass').value;
+          if(u === 'admin' && p === 'admin'){
+            // set a short-lived session flag so `loggedin.html` can verify this flow
+            try{ sessionStorage.setItem('meow_auth_pending','1'); sessionStorage.setItem('meow_user_pending', u); }catch(e){}
+            // store the username immediately so other pages can display it (login still finalised by loggedIn.html)
+            try{ localStorage.setItem('meow_user', u); }catch(e){}
+            // redirect to logged-in confirmation page which then forwards to index or a `next` page
+            var target = 'loggedin.html';
+            if(redirectNext) target += '?next=' + encodeURIComponent(redirectNext);
+            window.location.href = target;
+          } else {
+            err.textContent = 'Invalid credentials.';
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

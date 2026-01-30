@@ -1,0 +1,280 @@
+:root {
+  --bg: #09090c; /* near-black */
+  --bg-2: #0f0f14; /* subtle secondary */
+  --card: #0b0b10;
+  --accent: #8b5cf6; /* purple accent */
+  --accent-2: #6d28d9;
+  --muted: #9aa0c4; /* cool muted */
+  --text: #e9e7ff; /* pale purple/white */
+  --glass: rgba(255,255,255,0.02);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: linear-gradient(180deg,var(--bg), var(--bg-2));
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+.container{max-width:900px;margin:0 auto;padding:2rem}
+.container{--anim-delay:0s;opacity:0;transform:translateY(6px);animation: fadeIn .42s ease forwards;}
+.site-header{background:transparent;padding:.75rem 0}
+.logo{margin:0;font-size:1.125rem}
+/* Ensure logo links are not underlined but remain clickable */
+a.logo, .logo {text-decoration: none; color: var(--text); font-weight: 700}
+a.logo:hover {text-decoration: none; opacity: 0.92}
+
+/* accent the "dev" portion of the logo */
+.logo-accent{color:var(--accent);font-weight:800}
+.nav{display:flex;gap:1rem}
+.nav a{color:var(--muted);text-decoration:none;font-weight:600}
+
+/* Header layout for logo + logout button */
+.site-header .container{display:flex;align-items:center;justify-content:space-between}
+.logout-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--text);padding:.4rem .6rem;border-radius:8px;cursor:pointer;transition:background-color 180ms ease,border-color 180ms ease,box-shadow 180ms ease,transform 160ms ease}
+.logout-btn:hover{background:linear-gradient(180deg, rgba(139,92,246,0.14), rgba(109,40,217,0.12));border-color:rgba(139,92,246,0.35);box-shadow:0 8px 24px rgba(109,40,217,0.06);transform:translateY(-2px);color:var(--text)}
+
+/* User widget in header */
+.user-widget{display:inline-block;position:relative;margin-right:.5rem}
+.header-right{display:flex;align-items:center;gap:.5rem}
+.user-btn{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--text);padding:.35rem .6rem;border-radius:8px;cursor:pointer;display:flex;gap:.45rem;align-items:center}
+.user-btn:hover{background:rgba(139,92,246,0.06);border-color:rgba(139,92,246,0.18)}
+.user-panel{
+  position: absolute;
+  right: 0;
+  top: calc(100% + .5rem);
+  min-width: 220px;
+  background: linear-gradient(180deg, rgba(11,18,32,0.96), rgba(6,10,18,0.96));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: .75rem;
+  box-shadow: 0 18px 40px rgba(2,6,12,0.6);
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 180ms ease, transform 200ms ease, visibility 200ms linear;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--text);
+  z-index: 10002;
+}
+.user-panel[aria-hidden="false"], .user-widget.open .user-panel{visibility:visible;opacity:1;transform:none}
+.user-top{padding:.25rem 0}
+.user-name{font-weight:800;color:var(--text);font-size:1rem}
+.panel-link{display:inline-block;margin-top:.5rem;padding:.45rem .6rem;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.008));color:var(--text);text-decoration:none;border:1px solid rgba(255,255,255,0.03);font-weight:700}
+.panel-link:hover{box-shadow:0 8px 20px rgba(109,40,217,0.05);transform:translateY(-2px)}
+
+/* Alert banner for login-required messages */
+.alert-error{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  background:linear-gradient(180deg,#7f1d1d,#6b1212);
+  color:#fff;
+  padding:.6rem 1rem;
+  text-align:center;
+  z-index:11000;
+  font-weight:700;
+}
+.container{max-width:900px;margin:0 auto;padding:2rem}
+
+.hero{display:flex;align-items:center;min-height:60vh}
+.hero h2{font-size:2rem;margin:.2rem 0}
+.lead{color:var(--muted);margin:0 0 1.25rem}
+.btn{display:inline-block;background:var(--accent);color:#04202a;padding:.65rem 1rem;border-radius:8px;text-decoration:none;font-weight:700}
+
+.btn{transition:transform 160ms ease, box-shadow 160ms ease, opacity 160ms ease}
+.btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(109,40,217,0.12)}
+
+.section{padding:2rem 0}
+.site-footer{padding:1.25rem 0;color:var(--muted);font-size:.9rem}
+
+/* subtle global transitions */
+*{transition: background-color 200ms ease, color 180ms ease, border-color 180ms ease}
+
+@media (max-width:600px){
+  .container{padding:1rem}
+  .hero{min-height:50vh}
+  .nav{display:none}
+}
+
+/* Weather canvas overlay */
+.weather-canvas{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:9999;
+}
+
+.weather-controls{
+  position:fixed;
+  top:1rem;
+  right:1rem;
+  display:flex;
+  gap:.5rem;
+  z-index:10000;
+}
+.weather-controls button{
+  background:rgba(6,182,212,0.12);
+  color:var(--text);
+  border:1px solid rgba(255,255,255,0.06);
+  padding:.4rem .6rem;
+  border-radius:6px;
+  cursor:pointer;
+}
+.weather-controls button:hover{background:rgba(6,182,212,0.18)}
+
+/* Popup weather widget */
+.weather-widget{position:fixed;top:1rem;right:1rem;z-index:10000;font-size:.95rem}
+.weather-toggle{
+  background:rgba(6,182,212,0.12);
+  border:1px solid rgba(255,255,255,0.06);
+  color:var(--text);
+  padding:.45rem .6rem;
+  border-radius:8px;
+  cursor:pointer;
+}
+.weather-toggle{background:transparent;border-color:transparent}
+.weather-toggle:hover{background:rgba(139,92,246,0.06)}
+.weather-panel{
+  margin-top:.5rem;
+  background:linear-gradient(180deg, rgba(11,18,32,0.92), rgba(6,10,18,0.92));
+  padding:.75rem;
+  border-radius:8px;
+  box-shadow:0 6px 18px rgba(2,6,12,0.6);
+  min-width:180px;
+  backdrop-filter: blur(6px);
+  transform-origin: top right;
+  transform: translateX(8px) translateY(-6px) scale(0.98);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: transform 220ms cubic-bezier(.2,.9,.2,1), opacity 180ms linear, visibility 0s linear 220ms;
+}
+.weather-panel[aria-hidden="false"], .weather-widget.open .weather-panel{
+  transform: none;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+/* Forum list styles (XenForo-like) */
+.forum-list{padding:2rem 0}
+.forum-title{margin:0 0 1rem;font-size:1.25rem}
+.forums{list-style:none;margin:0;padding:0;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.05);background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.012));box-shadow:0 10px 30px rgba(139,92,246,0.04)}
+.forum-row{display:flex;justify-content:space-between;align-items:center;padding:1rem;border-bottom:1px solid rgba(255,255,255,0.02);transition: transform 180ms ease, box-shadow 180ms ease, background-color 160ms ease}
+.forum-row:last-child{border-bottom:none}
+.forum-main{display:flex;gap:1rem;align-items:center}
+.forum-icon{width:48px;height:48px;border-radius:8px;background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;font-size:1.25rem}
+.forum-info{min-width:220px}
+.forum-name{font-weight:700;color:var(--text);text-decoration:none}
+.forum-desc{color:var(--muted);font-size:.95rem;margin-top:.25rem}
+.forum-stats{text-align:right;min-width:140px}
+.forum-stats .count{font-weight:700}
+.forum-stats .last{color:var(--muted);font-size:.85rem;margin-top:.25rem}
+
+.forum-row:hover{transform:translateY(-6px);box-shadow:0 14px 40px rgba(109,40,217,0.08);background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0.003))}
+
+/* Proceed button on loggedin page styled like forum panels */
+.panel-btn{
+  display:inline-block;
+  padding:.6rem .9rem;
+  border-radius:8px;
+  background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.012));
+  border:1px solid rgba(255,255,255,0.05);
+  color:var(--text);
+  text-decoration:none;
+  font-weight:700;
+}
+.panel-btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(109,40,217,0.06)}
+
+@media (max-width:700px){
+  .forum-row{flex-direction:column;align-items:flex-start}
+  .forum-stats{text-align:left;margin-top:.5rem}
+}
+
+/* Grid for multiple forum columns */
+.forums-grid{display:grid;grid-template-columns:1fr 360px;gap:1rem}
+.forum-column{background:transparent}
+.thread-list{list-style:none;padding:0;margin:0;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.05);background:linear-gradient(180deg,rgba(255,255,255,0.028),rgba(255,255,255,0.01));box-shadow:0 10px 30px rgba(139,92,246,0.028)}
+.thread-row{display:flex;justify-content:space-between;padding:.75rem 1rem;border-bottom:1px solid rgba(255,255,255,0.02);align-items:center}
+.thread-row:last-child{border-bottom:none}
+.thread-row a{font-weight:700;color:var(--text);text-decoration:none}
+.thread-row .meta{color:var(--muted);font-size:.85rem}
+
+@media (max-width:900px){
+  .forums-grid{grid-template-columns:1fr}
+}
+
+/* Thread page tweaks */
+.thread-wrap.container{padding-top:2rem;padding-bottom:3rem}
+
+/* fade in animation */
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:none}
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .container, *{transition:none!important;animation:none!important}
+  /* ensure content remains visible when animations are disabled */
+  .container{opacity:1!important;transform:none!important}
+}
+
+/* Custom cursor (SVG data URI) */
+/* Uses purple accent circle with subtle stroke. Fallbacks to auto/pointer where appropriate. */
+body{
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><g stroke='%238b5cf6' stroke-width='2' stroke-linecap='round' fill='none'><line x1='12' y1='3' x2='12' y2='9'/><line x1='12' y1='15' x2='12' y2='21'/><line x1='3' y1='12' x2='9' y2='12'/><line x1='15' y1='12' x2='21' y2='12'/></g><circle cx='12' cy='12' r='2' fill='%238b5cf6'/></svg>") 12 12, auto;
+}
+
+/* Use pointer fallback for interactive controls */
+a, a.logo, button, .logout-btn, .btn, .panel-btn, .forum-row, .thread-row a { cursor: pointer; }
+
+@media (prefers-reduced-motion: reduce){
+  /* keep default cursor for reduced-motion users */
+  body{cursor:auto}
+}
+.weather-panel label{display:block;color:var(--muted);font-size:.8rem;margin-top:.4rem}
+.weather-panel select, .weather-panel input[type="range"]{width:100%;margin-top:.25rem}
+.speed-display{color:var(--muted);font-size:.85rem;text-align:right;margin-top:.25rem}
+
+/* Themed checkbox for Mouse Trail toggle inside user panel */
+#trail-toggle{
+  -webkit-appearance:none;
+  appearance:none;
+  width:18px;
+  height:18px;
+  border-radius:6px;
+  border:1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.008));
+  display:inline-block;
+  vertical-align:middle;
+  cursor:pointer;
+  position:relative;
+  transition: background 180ms ease, border-color 180ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+#trail-toggle:hover{ box-shadow: 0 8px 20px rgba(109,40,217,0.04); transform: translateY(-1px); }
+#trail-toggle:focus{ outline:none; box-shadow:0 10px 30px rgba(109,40,217,0.08); }
+#trail-toggle:before{
+  content:'';
+  position:absolute;
+  left:3px; top:3px; right:3px; bottom:3px;
+  border-radius:4px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transform: scale(0);
+  transition: transform 120ms ease, opacity 120ms ease;
+  opacity:0.98;
+}
+#trail-toggle:checked{ border-color: rgba(139,92,246,0.45); background: linear-gradient(90deg, rgba(139,92,246,0.12), rgba(109,40,217,0.08)); }
+#trail-toggle:checked:before{ transform: scale(1); }
+
+/* Ensure the label text aligns nicely */
+.user-panel label{ color:var(--text); font-weight:700 }

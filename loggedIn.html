@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Redirecting... / Apollo</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .center{max-width:640px;margin:12vh auto;text-align:center}
+      .center p{color:var(--muted)}
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <div class="center">
+        <h2 id="welcome">Welcome back</h2>
+        <p id="count">Redirecting to the site in 3 seconds...</p>
+        <p style="margin-top:1rem"><a id="proceed-now" class="panel-btn" href="index.html?autologin=1">Proceed now</a></p>
+      </div>
+    <script>
+      (function(){
+        // Only finalize login if redirected here from a valid login flow.
+        try{
+          var authPending = sessionStorage.getItem('meow_auth_pending') === '1';
+        }catch(e){ var authPending = false }
+
+        // If there's no session flag, do not set persistent login and show an error.
+        if(!authPending){
+          var welcomeEl = document.getElementById('welcome');
+          if(welcomeEl) welcomeEl.textContent = 'Unauthorized';
+          var el = document.getElementById('count');
+          if(el) el.textContent = 'You cannot access this page directly. Please sign in at the login page.';
+          var proceed = document.getElementById('proceed-now');
+          if(proceed){ proceed.textContent = 'Go to login'; proceed.href = 'login.html'; }
+          // stop here — do not auto-login
+          return;
+        }
+
+        // transfer pending session info into persistent storage and clear session flags
+        try{ localStorage.setItem('meow_logged_in','1'); }catch(e){}
+        try{ var uname = sessionStorage.getItem('meow_user_pending') || 'Guest'; localStorage.setItem('meow_user', uname); }catch(e){}
+        try{ sessionStorage.removeItem('meow_auth_pending'); sessionStorage.removeItem('meow_user_pending'); }catch(e){}
+
+        // show the username in the welcome message when available
+        try{
+          var uname = localStorage.getItem('meow_user') || 'Guest';
+          var welcomeEl = document.getElementById('welcome');
+          if(welcomeEl) welcomeEl.textContent = 'Welcome back, ' + uname;
+        }catch(e){}
+
+        var t = 3;
+        var el = document.getElementById('count');
+        function tick(){
+          if(!el) return;
+          el.textContent = 'Redirecting to the site in ' + t + ' second' + (t===1? '':'s') + '...';
+          if(t<=0){
+            // forward to next if provided, otherwise to index
+            try{
+              var params = new URLSearchParams(window.location.search);
+              var next = params.get('next');
+              if(next){
+                // ensure autologin token is appended
+                var decoded = decodeURIComponent(next);
+                var sep = decoded.indexOf('?')===-1 ? '?' : '&';
+                window.location.href = decoded + sep + 'autologin=1';
+                return;
+              }
+            }catch(e){}
+            window.location.href = 'index.html?autologin=1';
+          } else {
+            t--;
+            setTimeout(tick, 1000);
+          }
+        }
+        document.addEventListener('DOMContentLoaded', tick);
+      })();
+    </script>
+  </body>
+</html>

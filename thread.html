@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Thread</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .thread-wrap{max-width:900px;margin:4vh auto;padding:1.25rem;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0.005));border-radius:10px}
+      #posts{margin-top:1rem}
+      .post{padding:1rem;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.012));margin-bottom:.75rem;border:1px solid rgba(255,255,255,0.04)}
+      .post-meta{color:var(--muted);font-size:.9rem;margin-bottom:.5rem}
+      .post-body{color:var(--text)}
+      .post-form{margin-top:1rem}
+      .post-form textarea{width:100%;min-height:100px;padding:.6rem;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit}
+      .post-form .row{display:flex;gap:.5rem;margin-top:.5rem}
+      .post-form input[type="text"]{flex:0 0 180px;padding:.5rem;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit}
+      .post-form button{background:var(--accent);color:#04202a;border:none;padding:.55rem .9rem;border-radius:8px;cursor:pointer}
+      .no-posts{color:var(--muted);padding:1rem}
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container"><a href="index.html" class="logo">Apollo.<span class="logo-accent">dev</span></a></div>
+    </header>
+    <main>
+      <div class="thread-wrap container" id="thread-container">
+        <h2 id="thread-title">Thread</h2>
+        <div id="posts"></div>
+
+        <form id="post-form" class="post-form">
+          <label for="post-text">Your message</label>
+          <textarea id="post-text" required></textarea>
+          <div class="row">
+            <input id="post-author" type="text" placeholder="Your name" />
+            <button type="submit">Post message</button>
+          </div>
+        </form>
+      </div>
+    </main>
+    <script src="thread.js"></script>
+  </body>
+</html>
